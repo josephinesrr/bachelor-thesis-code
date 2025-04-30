@@ -476,11 +476,13 @@ print(coeftest(fixed_model, vcov. = vcov_two_way))
 pcdtest(fixed_model, test = "cd")
 
 ## Multicollinearity
-# Run linear regression to check for multicollinearity using VIF (Variance Inflation Factor)
-lm_model <- lm(HB ~ EthnicFractionalisation + RFindex + GDPperCapitaRelUS + 
-                 as.numeric(FDIndex) + ExportsGDP + DomesticMktCapGDP + ForeignMarketCapGDP, 
-               data = data)
-vif(lm_model)
+# Extract the model frame and compute VIF on transformed variables
+model_frame <- model.frame(fixed_model)
+demeaned_data <- fixed_model$model
+# Create a linear model with the demeaned data
+demean_model <- lm(fixed_model$formula, data = demeaned_data)
+vif_results <- vif(demean_model)
+print(vif_results)
 
 ### Residuals being normally distributed
 # Extract residuals and fitted values from the fixed effects model
